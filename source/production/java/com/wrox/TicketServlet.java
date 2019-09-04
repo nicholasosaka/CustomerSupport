@@ -173,6 +173,10 @@ public class TicketServlet extends HttpServlet
         response.sendRedirect("tickets?action=view&ticketId=" + id);
     }
     
+    private void deleteTicket(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    	
+    }
+    
     private void updateTicket(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
     	//TODO FINISH
     	String ticketID = request.getParameter("ticketId");
