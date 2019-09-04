@@ -187,6 +187,7 @@ public class TicketServlet extends HttpServlet
 
         request.setAttribute("ticketId", ticketID);
         request.setAttribute("ticket", ticket);
+        
 
         request.getRequestDispatcher("/WEB-INF/jsp/view/updateTicket.jsp")
                .forward(request, response);

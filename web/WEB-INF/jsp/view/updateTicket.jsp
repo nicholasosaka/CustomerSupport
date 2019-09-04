@@ -5,8 +5,8 @@
         <input type="text" name="subject" value="${ticket.subject}"><br /><br />
         Body<br />
         <textarea name="body" rows="5" cols="30">${ticket.body}</textarea><br /><br />
-        <b>Attachments</b><br />
-        <input type="file" name="file1" value=""/><br /><br />
+        <b>Add another attachment:</b><br />
+        <input type="file" name="file1"/><br /><br />
         <input type="submit" value="Update"/>
     </form>
 </template:basic>
