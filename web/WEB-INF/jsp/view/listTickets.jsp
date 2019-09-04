@@ -16,6 +16,11 @@
                 <wrox:formatDate value="${entry.value.dateCreated}" type="both"
                                  timeStyle="short" dateStyle="medium" /><br />
                 <br />
+                <a href="<c:url value="/tickets">
+                    <c:param name="action" value="update" />
+                    <c:param name="ticketId" value="${entry.key}" />
+                </c:url>">
+                Update
             </c:forEach>
         </c:otherwise>
     </c:choose>

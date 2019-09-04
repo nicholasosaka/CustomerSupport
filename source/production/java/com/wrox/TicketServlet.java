@@ -46,6 +46,9 @@ public class TicketServlet extends HttpServlet
             case "view":
                 this.viewTicket(request, response);
                 break;
+            case "update":
+            	this.updateTicket(request, response);
+            	break;
             case "download":
                 this.downloadAttachment(request, response);
                 break;
