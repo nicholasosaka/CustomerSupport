@@ -47,7 +47,10 @@ public class TicketServlet extends HttpServlet
                 this.viewTicket(request, response);
                 break;
             case "update":
-            	this.updateTicket(request, response);
+            	this.showUpdateForm(request, response);
+            	break;
+            case "delete":
+            	this.deleteTicket(request, response);
             	break;
             case "download":
                 this.downloadAttachment(request, response);
@@ -85,6 +88,23 @@ public class TicketServlet extends HttpServlet
     	request.getRequestDispatcher("/WEB-INF/jsp/view/ticketForm.jsp")
         .forward(request, response);
     }
+    
+    private void showUpdateForm(HttpServletRequest request,
+            					HttpServletResponse response)
+    		throws ServletException, IOException
+	{
+    	String ticketID = request.getParameter("ticketId");
+    	if(ticketID == null) response.sendRedirect("tickets");
+    	
+    	Ticket ticket = getTicket(ticketID, response);
+    	
+
+        request.setAttribute("ticketId", ticketID);
+        request.setAttribute("ticket", ticket);
+        
+		request.getRequestDispatcher("/WEB-INF/jsp/view/updateTicket.jsp")
+		.forward(request, response);
+	}
 
     private void viewTicket(HttpServletRequest request,
                             HttpServletResponse response)
@@ -174,7 +194,18 @@ public class TicketServlet extends HttpServlet
     }
     
     private void deleteTicket(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    	String ticketID = request.getParameter("ticketId");
     	
+    	Ticket ticket = getTicket(ticketID, response);
+    	this.ticketDatabase.remove(Integer.parseInt(ticketID));
+    	this.ticketDatabase.remove(ticket);
+    	
+    	System.out.println(this.ticketDatabase.size());
+    	
+    	request.setAttribute("ticketDatabase", this.ticketDatabase);
+    	
+    	request.getRequestDispatcher("/WEB-INF/jsp/view/listTickets.jsp")
+        .forward(request, response);
     }
     
     private void updateTicket(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -188,9 +219,21 @@ public class TicketServlet extends HttpServlet
         request.setAttribute("ticketId", ticketID);
         request.setAttribute("ticket", ticket);
         
+        ticket.setSubject(request.getParameter("subject"));
+        ticket.setBody(request.getParameter("body"));
+        ticket.setDateCreated(Instant.now());
 
-        request.getRequestDispatcher("/WEB-INF/jsp/view/updateTicket.jsp")
-               .forward(request, response);
+        Part filePart = request.getPart("file1");
+        if(filePart != null && filePart.getSize() > 0)
+        {
+            Attachment attachment = this.processAttachment(filePart);
+            if(attachment != null)
+                ticket.addAttachment(attachment);
+        }
+        
+        this.ticketDatabase.put(Integer.parseInt(ticketID), ticket);
+
+        response.sendRedirect("tickets?action=view&ticketId=" + ticketID);
 	}
 
     private Attachment processAttachment(Part filePart)
