@@ -82,8 +82,8 @@ public class TicketServlet extends HttpServlet
                                 HttpServletResponse response)
             throws ServletException, IOException
     {
-        request.getRequestDispatcher("/WEB-INF/jsp/view/ticketForm.jsp")
-               .forward(request, response);
+    	request.getRequestDispatcher("/WEB-INF/jsp/view/ticketForm.jsp")
+        .forward(request, response);
     }
 
     private void viewTicket(HttpServletRequest request,
@@ -175,8 +175,18 @@ public class TicketServlet extends HttpServlet
     
     private void updateTicket(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
     	//TODO FINISH
+    	String ticketID = request.getParameter("ticketId");
+    	if(ticketID == null) response.sendRedirect("tickets");
     	
-    }
+    	Ticket ticket = getTicket(ticketID, response);
+    	
+
+        request.setAttribute("ticketId", ticketID);
+        request.setAttribute("ticket", ticket);
+
+        request.getRequestDispatcher("/WEB-INF/jsp/view/updateTicket.jsp")
+               .forward(request, response);
+	}
 
     private Attachment processAttachment(Part filePart)
             throws IOException

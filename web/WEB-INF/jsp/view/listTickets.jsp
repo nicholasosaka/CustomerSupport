@@ -20,7 +20,14 @@
                     <c:param name="action" value="update" />
                     <c:param name="ticketId" value="${entry.key}" />
                 </c:url>">
-                Update
+                Update</a>
+                <a href="<c:url value="/tickets">
+                    <c:param name="action" value="delete" />
+                    <c:param name="ticketId" value="${entry.key}" />
+                </c:url>">
+                Delete</a>
+                <br />
+                <br />
             </c:forEach>
         </c:otherwise>
     </c:choose>
