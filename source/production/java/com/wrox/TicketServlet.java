@@ -28,6 +28,8 @@ import java.util.Map;
 public class TicketServlet extends HttpServlet
 {
     private volatile int TICKET_ID_SEQUENCE = 1;
+    
+    private String toUpdate = "0";
 
     private Map<Integer, Ticket> ticketDatabase = new LinkedHashMap<>();
 
@@ -74,6 +76,9 @@ public class TicketServlet extends HttpServlet
             case "create":
                 this.createTicket(request, response);
                 break;
+            case "update":
+            	this.updateTicket(request, response);
+            	break;
             case "list":
             default:
                 response.sendRedirect("tickets");
@@ -94,16 +99,19 @@ public class TicketServlet extends HttpServlet
     		throws ServletException, IOException
 	{
     	String ticketID = request.getParameter("ticketId");
+    	toUpdate = ticketID;
+    	System.out.println(ticketID + " in showUpdateForm");
+    	
     	if(ticketID == null) response.sendRedirect("tickets");
     	
     	Ticket ticket = getTicket(ticketID, response);
-    	
 
         request.setAttribute("ticketId", ticketID);
         request.setAttribute("ticket", ticket);
         
+        
 		request.getRequestDispatcher("/WEB-INF/jsp/view/updateTicket.jsp")
-		.forward(request, response);
+				.forward(request, response);
 	}
 
     private void viewTicket(HttpServletRequest request,
@@ -195,30 +203,33 @@ public class TicketServlet extends HttpServlet
     
     private void deleteTicket(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
     	String ticketID = request.getParameter("ticketId");
-    	
+
     	Ticket ticket = getTicket(ticketID, response);
     	this.ticketDatabase.remove(Integer.parseInt(ticketID));
-    	this.ticketDatabase.remove(ticket);
     	
     	System.out.println(this.ticketDatabase.size());
     	
     	request.setAttribute("ticketDatabase", this.ticketDatabase);
     	
-    	request.getRequestDispatcher("/WEB-INF/jsp/view/listTickets.jsp")
-        .forward(request, response);
+    	response.sendRedirect("tickets");
+    	
     }
     
     private void updateTicket(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
     	//TODO FINISH
+    	
     	String ticketID = request.getParameter("ticketId");
-    	if(ticketID == null) response.sendRedirect("tickets");
+    	System.out.println(request.getParameter("ticketId") + " in updateTicket");
+    	System.out.println(toUpdate + ": toUpdate");
     	
-    	Ticket ticket = getTicket(ticketID, response);
+    	//npe from ticketID -> parameter ticket id?
+    	this.ticketDatabase.remove(getTicket(toUpdate, response));
     	
-
-        request.setAttribute("ticketId", ticketID);
-        request.setAttribute("ticket", ticket);
-        
+    	Ticket ticket = new Ticket();
+    	
+        ticket.setCustomerName(
+                (String)request.getSession().getAttribute("username")
+        );
         ticket.setSubject(request.getParameter("subject"));
         ticket.setBody(request.getParameter("body"));
         ticket.setDateCreated(Instant.now());
@@ -230,8 +241,8 @@ public class TicketServlet extends HttpServlet
             if(attachment != null)
                 ticket.addAttachment(attachment);
         }
-        
-        this.ticketDatabase.put(Integer.parseInt(ticketID), ticket);
+
+        this.ticketDatabase.put(Integer.parseInt(toUpdate), ticket);
 
         response.sendRedirect("tickets?action=view&ticketId=" + ticketID);
 	}

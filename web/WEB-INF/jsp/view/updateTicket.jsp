@@ -1,4 +1,4 @@
-<template:basic htmlTitle="Update a Ticket" bodyTitle="Update a Ticket">
+<template:basic htmlTitle="Update Ticket# ${ticketId}" bodyTitle="Update Ticket# ${ticketId}">
     <form method="POST" action="tickets" enctype="multipart/form-data">
         <input type="hidden" name="action" value="update"/>
         Subject<br />
